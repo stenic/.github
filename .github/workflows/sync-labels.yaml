@@ -22,4 +22,5 @@ jobs:
           GITHUB_ACCESS_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           for repo in $(curl -s https://api.github.com/orgs/stenic/repos | jq -r '.[] | select(.name | contains("github") | not) | .name'); do \
-            github-label-sync --dry-run stenic/$repo; done
+            github-label-sync stenic/$repo; \
+          done
