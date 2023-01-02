@@ -1,0 +1,25 @@
+name: Sync labels
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - labels.json
+
+jobs:
+  labels:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm install -g github-label-sync
+      - shell: bash
+        env:
+          GITHUB_ACCESS_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          for repo in $(curl -s https://api.github.com/orgs/stenic/repos | jq -r '.[] | select(.name | contains("github") | not) | .name'); do \
+            github-label-sync --dry-run stenic/$repo; done
